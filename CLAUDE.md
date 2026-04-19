@@ -102,6 +102,71 @@ Development images include Xdebug and mount source directories as volumes. Produ
 
 <!-- Document how a new feature is organized across backend (entity, service, API resource) and frontend (route, query, components). -->
 
+## Feature Workflow
+
+```
+PO
+└── Rédige la user story + critères d'acceptance
+    │
+    ▼
+Architecte
+└── Définit le contrat API (endpoints, types partagés)
+    └── Valide le modèle de données
+    │
+    ▼
+┌──────────────────────┬──────────────────────┐
+Backend Developer      UI/UX Designer
+└── Entité + migration └── Maquettes
+└── Service + tests    └── Specs design
+└── API Resource       │
+    │                  ▼
+    │         Frontend Developer
+    │         └── Routes + composants
+    │         └── Queries (mockées puis réelles)
+    │         └── Tests
+    │                  │
+    └──────────────────┘
+                │
+                ▼
+    Security & Code Reviewer
+        └── Revue sécurité + qualité
+                │
+                ▼
+               QA
+        └── Tests d'intégration + E2E
+                │
+                ▼
+        Documentaliste
+        └── Docs API + guides
+                │
+                ▼
+            DevOps
+        └── Déploiement
+```
+
+**Points clés :**
+- Backend et UI/UX travaillent en parallèle — ils sont indépendants
+- Frontend démarre dès que l'UI/UX a terminé, avec des données mockées
+- Frontend branche sur la vraie API quand le Backend est prêt
+- Security & Code Reviewer intervient avant QA — on corrige avant de valider
+- QA valide sur du code déjà revu et sécurisé
+
 ## Deployment
 
 <!-- Document the production deployment process here (server setup, Docker, migrations, etc.). -->
+
+## Agents
+
+Each agent has a defined scope, toolset, and model. Agents do not overlap in write responsibilities.
+
+| Agent | Model | Tools | Notes |
+|---|---|---|---|
+| **PO** | Sonnet | Read, Write, WebSearch, WebFetch | Specs and user stories only, no code access |
+| **Architecte** | Opus | Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch | API contracts, data models, front/back consistency |
+| **Backend Developer** | Sonnet | Read, Write, Edit, Glob, Grep, Bash | Symfony, API Platform, Doctrine |
+| **Frontend Developer** | Sonnet | Read, Write, Edit, Glob, Grep, Bash | React, TypeScript, TanStack, Tailwind |
+| **UI/UX Designer** | Sonnet | Read, Write, Glob, WebSearch, WebFetch | Design specs only, no Bash |
+| **QA** | Sonnet | Read, Write, Edit, Glob, Grep, Bash | Test writing and execution |
+| **DevOps** | Sonnet | Read, Write, Edit, Glob, Grep, Bash | Docker, CI/CD, infrastructure |
+| **Security & Code Reviewer** | Opus | Read, Glob, Grep, WebSearch, WebFetch | Reviews only — no direct code modifications |
+| **Documentaliste** | Haiku | Read, Write, Edit, Glob, Grep, WebSearch, WebFetch | API docs, technical and user documentation |
