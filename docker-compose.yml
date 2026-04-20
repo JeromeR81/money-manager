@@ -80,7 +80,7 @@ services:
       - app
 
   mailpit:
-    image: axllent/mailpit:latest
+    image: axllent/mailpit:v1.21
     ports:
       - "8025:8025"
     networks:
@@ -118,6 +118,12 @@ services:
   filebeat:
     image: docker.elastic.co/beats/filebeat:8.13.4
     user: root
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
     volumes:
       - ./devops/docker/config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro

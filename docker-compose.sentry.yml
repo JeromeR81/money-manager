@@ -1,89 +1,28 @@
 # Sentry self-hosted — démarrage à la demande
 #
-# Prérequis : le réseau 'app' doit exister (docker compose up -d)
-# Usage    : docker compose -f docker-compose.sentry.yml up -d
+# Prérequis :
+#   1. git clone https://github.com/getsentry/self-hosted.git sentry/
+#   2. cd sentry && ./install.sh
+#   3. Le réseau 'app' doit exister : docker compose up -d
 #
-# Initialisation (première fois uniquement) :
-#   docker compose -f docker-compose.sentry.yml run --rm sentry-web upgrade
+# Démarrage :
+#   docker compose -f docker-compose.sentry.yml up -d
 #
-# Le DSN de ton projet Sentry est à renseigner dans .env → SENTRY_DSN
-# Il sera utilisé par le SDK Symfony via la variable d'environnement.
+# Accès Sentry : http://localhost:9000
+# DSN : créer un projet dans l'UI, copier le DSN dans .env → SENTRY_DSN
+#
+# Note : nécessite Docker Compose v2.20+
 
+include:
+  - path: ./sentry/docker-compose.yml
+
+# Connecte le service web de Sentry au réseau applicatif
+# pour que le SDK Symfony puisse envoyer les événements en interne.
 services:
-  sentry-web:
-    image: getsentry/sentry:latest
-    ports:
-      - "9000:9000"
-    environment:
-      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
-      SENTRY_DB_HOST: sentry-postgres
-      SENTRY_DB_NAME: ${SENTRY_POSTGRES_DB:-sentry}
-      SENTRY_DB_USER: ${SENTRY_POSTGRES_USER:-sentry}
-      SENTRY_DB_PASSWORD: ${SENTRY_POSTGRES_PASSWORD}
-      SENTRY_REDIS_HOST: sentry-redis
-    depends_on:
-      - sentry-postgres
-      - sentry-redis
+  web:
     networks:
-      - sentry
       - app
 
-  sentry-worker:
-    image: getsentry/sentry:latest
-    command: run worker
-    environment:
-      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
-      SENTRY_DB_HOST: sentry-postgres
-      SENTRY_DB_NAME: ${SENTRY_POSTGRES_DB:-sentry}
-      SENTRY_DB_USER: ${SENTRY_POSTGRES_USER:-sentry}
-      SENTRY_DB_PASSWORD: ${SENTRY_POSTGRES_PASSWORD}
-      SENTRY_REDIS_HOST: sentry-redis
-    depends_on:
-      - sentry-postgres
-      - sentry-redis
-    networks:
-      - sentry
-
-  sentry-cron:
-    image: getsentry/sentry:latest
-    command: run cron
-    environment:
-      SENTRY_SECRET_KEY: ${SENTRY_SECRET_KEY}
-      SENTRY_DB_HOST: sentry-postgres
-      SENTRY_DB_NAME: ${SENTRY_POSTGRES_DB:-sentry}
-      SENTRY_DB_USER: ${SENTRY_POSTGRES_USER:-sentry}
-      SENTRY_DB_PASSWORD: ${SENTRY_POSTGRES_PASSWORD}
-      SENTRY_REDIS_HOST: sentry-redis
-    depends_on:
-      - sentry-postgres
-      - sentry-redis
-    networks:
-      - sentry
-
-  sentry-postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: ${SENTRY_POSTGRES_DB:-sentry}
-      POSTGRES_USER: ${SENTRY_POSTGRES_USER:-sentry}
-      POSTGRES_PASSWORD: ${SENTRY_POSTGRES_PASSWORD}
-    volumes:
-      - sentry_postgres_data:/var/lib/postgresql/data
-    networks:
-      - sentry
-
-  sentry-redis:
-    image: redis:7-alpine
-    volumes:
-      - sentry_redis_data:/data
-    networks:
-      - sentry
-
-volumes:
-  sentry_postgres_data:
-  sentry_redis_data:
-
 networks:
-  sentry:
-    driver: bridge
   app:
     external: true
