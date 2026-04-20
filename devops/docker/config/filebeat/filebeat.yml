@@ -1,0 +1,36 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      hints.default_config:
+        type: container
+        paths:
+          - /var/lib/docker/containers/${data.container.id}/*.log
+
+processors:
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+  - decode_json_fields:
+      fields: ["message"]
+      target: ""
+      overwrite_keys: true
+      when:
+        has_fields: ["message"]
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  indices:
+    - index: "nginx-%{+yyyy.MM.dd}"
+      when.contains:
+        docker.container.labels.com.docker.compose.service: "nginx"
+    - index: "php-%{+yyyy.MM.dd}"
+      when.contains:
+        docker.container.labels.com.docker.compose.service: "php"
+    - index: "filebeat-%{+yyyy.MM.dd}"
+
+setup.kibana:
+  host: "kibana:5601"
+
+setup.dashboards.enabled: true
+setup.template.enabled: true
+setup.ilm.enabled: false
