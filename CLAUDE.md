@@ -14,17 +14,27 @@ Application personnelle de gestion financière. Non destinée à un déploiement
 ## Structure du dépôt
 
 ```
-backend/          # Application Symfony
-frontend/         # Application React + Vite
+backend/                    # Application Symfony
+frontend/                   # Application React + Vite
 devops/
-└── docker/
-    ├── dev/      # Dockerfiles de développement (Xdebug, hot reload)
-    └── prod/     # Dockerfiles de production (optimisés, sans outils de dev)
-docker-compose.yml       # Développement
-docker-compose.prod.yml  # Production
+├── docker/
+│   ├── dev/                # Dockerfiles dev (Xdebug, hot reload)
+│   ├── prod/               # Dockerfiles prod (optimisés, sans outils de dev)
+│   └── config/             # Configurations Filebeat, RabbitMQ
+└── generate-jwt-keys.sh    # Génération des clés JWT RS256
+docker-compose.yml          # Développement
+docker-compose.prod.yml     # Production
 ```
 
 ## Commandes
+
+### Setup initial
+
+```bash
+cp .env.example .env                  # Copier et renseigner les variables
+bash devops/generate-jwt-keys.sh      # Générer les clés JWT RS256
+docker compose up -d                  # Démarrer tous les services
+```
 
 ### Docker (dev)
 
@@ -33,6 +43,18 @@ docker compose up -d          # Démarrer tous les services
 docker compose down           # Arrêter tous les services
 docker compose logs -f        # Suivre les logs
 ```
+
+### Services dev
+
+| Service | URL |
+|---|---|
+| API Backend | http://localhost |
+| Frontend Vite | http://localhost:5173 |
+| RabbitMQ Management | http://localhost:15672 |
+| Mailpit | http://localhost:8025 |
+| Kibana | http://localhost:5601 |
+
+> En production, Kibana n'est pas exposé publiquement. Accès : `ssh -L 5601:localhost:5601 <serveur>`
 
 ### Backend (Symfony)
 
