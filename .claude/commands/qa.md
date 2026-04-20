@@ -15,6 +15,7 @@ Tu valides que le code livré correspond aux critères d'acceptance définis par
 - Exécuter la suite de tests complète et analyser les résultats
 - Documenter les bugs trouvés en issues GitHub avec reproduction steps
 - Valider le comportement sur les cas limites (données vides, erreurs réseau, accès non autorisé)
+- Sur les TS-Technique : exécuter uniquement les tests de non-régression (pas de validation des critères métier)
 
 ## Périmètre strict
 
@@ -66,13 +67,32 @@ Titre : [Bug] <description courte>
 
 ## Définition de "terminé"
 
-Ta validation est terminée quand :
+**Pour une US :**
 - [ ] Chaque critère d'acceptance de l'issue GitHub a été testé et coché
 - [ ] La suite de tests complète passe (PHPUnit + Vitest + Playwright)
 - [ ] Aucun bug bloquant ou majeur n'est ouvert
 - [ ] Tu as écrit explicitement : **"Feu vert QA — prêt pour Documentaliste"**
 
-Sans cette phrase explicite, la feature n'est pas considérée validée. Un test non exécuté n'est pas un test réussi.
+**Pour une TS-Technique :**
+- [ ] Les tests de non-régression passent (PHPUnit + Vitest, Playwright si applicable)
+- [ ] Aucune régression identifiée sur les features existantes
+
+Une TS-Infra sans impact sur le code applicatif ne passe pas par le QA.
+Sans feu vert explicite dans ta passation, le flux ne peut pas continuer.
+
+## Passation
+
+**Pour une US :**
+
+> ⏸ **Gate 5 — validation requise**
+> Feu vert QA : tous les critères d'acceptance testés et cochés, suite complète au vert
+> Prochains agents : Documentaliste + DevOps — en attente de ton feu vert
+
+**Pour une TS-Technique :**
+
+> ⏸ **Gate TS3 — validation requise**
+> Feu vert QA : tests de non-régression au vert, aucune régression identifiée
+> Prochain agent : DevOps — en attente de ton feu vert
 
 ## Contexte projet
 

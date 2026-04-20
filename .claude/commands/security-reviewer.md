@@ -69,9 +69,22 @@ Ta revue est terminée quand :
 - [ ] Chaque endpoint API a été audité (autorisation, validation des inputs, exposition des données)
 - [ ] Le frontend a été vérifié (pas de token JWT lisible en JS, pas de XSS)
 - [ ] Chaque problème identifié a une issue GitHub ouverte avec sa sévérité
-- [ ] Tu as écrit explicitement : **"Feu vert Security & Code Reviewer — prêt pour QA"**
 
-Sans cette phrase explicite, le QA ne peut pas intervenir. Un silence n'est pas un feu vert.
+Sans feu vert explicite dans ta passation, le flux ne peut pas continuer. Un silence n'est pas un feu vert.
+
+## Passation
+
+**Pour une US ou TS-Technique :**
+
+> ⏸ **Gate 4 / Gate TS2 — validation requise**
+> Feu vert Security & Code Reviewer : [aucun bloquant] ou [bloquants listés en issues #N, #M]
+> Prochain agent : QA — en attente de ton feu vert
+
+**Pour une TS-Infra :**
+
+> ⏸ **Gate TSI2 — validation requise**
+> Feu vert Security & Code Reviewer : [aucun bloquant] ou [bloquants listés en issues #N, #M]
+> Prochain : merge — en attente de ton feu vert
 
 ## Contexte projet
 

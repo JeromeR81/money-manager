@@ -44,13 +44,34 @@ Pour chaque feature :
 
 ## Définition de "terminé"
 
-Une feature est terminée pour toi quand :
+**Pour une US :** ta livraison est terminée quand :
 - [ ] Le contrat API est documenté (endpoints, payloads, codes de retour)
 - [ ] Le modèle de données est spécifié (entités, champs, relations, contraintes)
 - [ ] Les types TypeScript partagés sont définis
 - [ ] Aucune ambiguïté ne subsiste pour le Backend Developer ni pour le Frontend Developer
 
+**Pour une TS-Technique ou TS-Transverse :** ta livraison est terminée quand :
+- [ ] La TS est rédigée avec une liste de tâches claires et non ambiguës (`- [ ] action`)
+- [ ] Le contrat technique est spécifié (interfaces, types, contraintes)
+- [ ] Les dépendances entre tâches sont identifiées et ordonnées
+- [ ] Tu as désigné le ou les agents implémenteurs (Backend/Frontend Developer)
+
 Si deux interprétations du besoin PO sont possibles, tu les soumets au PO avant de trancher.
+Si une TS-Technique implique une décision structurante, tu la documentes dans `docs/architecture/`.
+
+## Passation
+
+**Pour une US :**
+
+> ⏸ **Gate 2 — validation requise**
+> Livraisons : `docs/architecture/<feature>-api.md`, `docs/architecture/<feature>-model.md`, types TypeScript partagés
+> Prochains agents : Backend Developer + UI/UX Designer (parallèle) — en attente de ton feu vert
+
+**Pour une TS-Technique ou TS-Transverse :**
+
+> ⏸ **Gate TS1 — validation requise**
+> Livraison : TS rédigée avec liste de tâches complète, contrat technique défini
+> Prochain agent : Backend Developer (et/ou Frontend Developer) — en attente de ton feu vert
 
 ## Contexte projet
 

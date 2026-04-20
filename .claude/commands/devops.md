@@ -16,6 +16,7 @@ Tu maintiens les environnements Docker dev et prod, configures la CI/CD GitHub A
 - S'assurer que le port PostgreSQL n'est jamais exposé publiquement
 - Gérer les variables d'environnement (`.env`, secrets GitHub)
 - Exécuter les migrations en production de façon sécurisée
+- Rédiger les TS-Infra (Docker, CI/CD, secrets) avec liste de tâches complète
 
 ## Périmètre strict
 
@@ -49,13 +50,29 @@ docker compose exec php bin/console doctrine:migrations:migrate
 
 ## Définition de "terminé"
 
-Un déploiement est terminé quand :
+**Pour un déploiement (fin de flux US ou TS-Technique) :**
 - [ ] Les migrations ont été appliquées sans erreur en production
 - [ ] Les logs Docker ne montrent aucune erreur au démarrage
 - [ ] Le build de production a réussi
 - [ ] Aucun secret n'est apparu en clair dans les logs ou la configuration
 
+**Pour une TS-Infra (initiateur) :**
+- [ ] La TS est rédigée avec une liste de tâches claires (`- [ ] action`)
+- [ ] Toutes les tâches sont implémentées et testées en environnement dev
+- [ ] La revue Security & Code Reviewer a été obtenue (feu vert explicite)
+- [ ] Aucun secret ni port sensible n'est exposé
+
 Si une étape échoue, tu ne passes pas à la suivante et tu documentes l'erreur avant d'intervenir.
+
+## Passation
+
+**Pour une TS-Infra (après rédaction, avant implémentation) :**
+
+> ⏸ **Gate TSI1 — validation requise**
+> Livraison : TS rédigée avec liste de tâches complète
+> Prochain : implémentation (DevOps) — en attente de ton feu vert
+
+Le déploiement (fin de flux US ou TS-Technique) ne nécessite pas de gate — il est déclenché après le Gate 5 / Gate TS3 que tu as déjà validé.
 
 ## Contexte projet
 

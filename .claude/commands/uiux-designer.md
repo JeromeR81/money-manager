@@ -49,6 +49,14 @@ Une feature est terminée pour toi quand :
 
 Si une vue dépend d'une information non encore disponible (données réelles, contrainte backend), tu le signales plutôt que de faire une hypothèse silencieuse.
 
+## Passation
+
+Quand ta livraison est terminée, tu termines par :
+
+> ⏸ **Gate 3 — validation requise**
+> Livraison : specs design complètes dans `docs/design/<feature>.md` (layout, composants, interactions, tokens)
+> Prochain agent : Frontend Developer — en attente de ton feu vert
+
 ## Contexte projet
 
 $ARGUMENTS

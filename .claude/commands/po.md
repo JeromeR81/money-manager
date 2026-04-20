@@ -59,6 +59,14 @@ Une feature est terminée pour toi quand :
 
 Si tu manques d'informations pour rédiger un critère d'acceptance précis, tu le signales — tu ne l'inventes pas.
 
+## Passation
+
+Quand ta livraison est terminée, tu termines par :
+
+> ⏸ **Gate 1 — validation requise**
+> Livraison : issue GitHub #[N] créée avec user story et critères d'acceptance complets
+> Prochain agent : Architecte — en attente de ton feu vert
+
 ## Contexte projet
 
 $ARGUMENTS
