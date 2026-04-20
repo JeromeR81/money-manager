@@ -1,37 +1,37 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Ce fichier fournit des instructions à Claude Code (claude.ai/code) pour travailler sur ce dépôt.
 
-## Project Overview
+## Présentation du projet
 
-Personal money manager application. Not intended for multi-user deployment.
+Application personnelle de gestion financière. Non destinée à un déploiement multi-utilisateurs.
 
-**Stack:**
-- Backend: PHP 8.5, Symfony 7.4 LTS, API Platform, Doctrine ORM, PostgreSQL
-- Frontend: React + Vite, TypeScript, TanStack Router, TanStack Query, Tailwind CSS
-- Auth: JWT via LexikJWTAuthenticationBundle, stored in HttpOnly cookies (never localStorage)
+**Stack :**
+- Backend : PHP 8.5, Symfony 7.4 LTS, API Platform, Doctrine ORM, PostgreSQL
+- Frontend : React + Vite, TypeScript, TanStack Router, TanStack Query, Tailwind CSS
+- Auth : JWT via LexikJWTAuthenticationBundle, stocké en cookies HttpOnly (jamais en localStorage)
 
-## Repository Structure
+## Structure du dépôt
 
 ```
-backend/          # Symfony application
-frontend/         # React + Vite application
+backend/          # Application Symfony
+frontend/         # Application React + Vite
 devops/
 └── docker/
-    ├── dev/      # Dockerfiles for development (includes Xdebug, hot reload)
-    └── prod/     # Dockerfiles for production (optimized, no debug tools)
-docker-compose.yml       # Development
+    ├── dev/      # Dockerfiles de développement (Xdebug, hot reload)
+    └── prod/     # Dockerfiles de production (optimisés, sans outils de dev)
+docker-compose.yml       # Développement
 docker-compose.prod.yml  # Production
 ```
 
-## Commands
+## Commandes
 
 ### Docker (dev)
 
 ```bash
-docker compose up -d          # Start all services
-docker compose down           # Stop all services
-docker compose logs -f        # Follow logs
+docker compose up -d          # Démarrer tous les services
+docker compose down           # Arrêter tous les services
+docker compose logs -f        # Suivre les logs
 ```
 
 ### Backend (Symfony)
@@ -40,7 +40,7 @@ docker compose logs -f        # Follow logs
 docker compose exec php composer install
 docker compose exec php bin/console cache:clear
 docker compose exec php bin/console doctrine:migrations:migrate
-docker compose exec php bin/console doctrine:migrations:diff   # Generate migration from entity changes
+docker compose exec php bin/console doctrine:migrations:diff   # Générer une migration depuis les changements d'entités
 ```
 
 ### Frontend
@@ -48,8 +48,8 @@ docker compose exec php bin/console doctrine:migrations:diff   # Generate migrat
 ```bash
 cd frontend
 npm install
-npm run dev        # Start Vite dev server
-npm run build      # Production build
+npm run dev        # Démarrer le serveur de dev Vite
+npm run build      # Build de production
 npm run lint       # ESLint
 ```
 
@@ -58,209 +58,65 @@ npm run lint       # ESLint
 ```bash
 # Backend
 docker compose exec php bin/phpunit
-docker compose exec php bin/phpunit tests/Unit/MyTest.php   # Single test file
+docker compose exec php bin/phpunit tests/Unit/MyTest.php   # Fichier de test unique
 
-# Frontend — unit/component
+# Frontend — unitaires/composants
 cd frontend
-npm run test              # Vitest (watch mode)
-npm run test -- --run     # Vitest (single run)
+npm run test              # Vitest (mode watch)
+npm run test -- --run     # Vitest (exécution unique)
 
 # Frontend — E2E
 npm run test:e2e          # Playwright
-npm run test:e2e -- --grep "test name"   # Single E2E test
+npm run test:e2e -- --grep "nom du test"   # Test E2E unique
 ```
 
 ## Architecture
 
 ### Backend
 
-Symfony follows standard bundle structure. API Platform auto-generates REST endpoints from Doctrine entities annotated with `#[ApiResource]`. Business logic lives in services, not controllers. Migrations are managed by Doctrine Migrations.
+Symfony suit la structure standard des bundles. API Platform génère automatiquement les endpoints REST depuis les entités Doctrine annotées avec `#[ApiResource]`. La logique métier réside dans les services, jamais dans les contrôleurs. Les migrations sont gérées par Doctrine Migrations.
 
-JWT access tokens have a short TTL (15 min); refresh tokens handle renewal. Tokens are set as `HttpOnly`, `Secure`, `SameSite=Strict` cookies by the backend — never exposed to JavaScript.
+Les access tokens JWT ont une courte durée de vie (15 min) ; les refresh tokens gèrent le renouvellement. Les tokens sont définis en cookies `HttpOnly`, `Secure`, `SameSite=Strict` par le backend — jamais exposés à JavaScript.
 
 ### Frontend
 
-TanStack Router handles client-side routing with full TypeScript type safety. TanStack Query manages all server state (fetching, caching, invalidation) from the API Platform backend. Components are organized by feature, not by type.
+TanStack Router gère le routage côté client avec une sécurité de types TypeScript complète. TanStack Query gère tout le state serveur (fetch, cache, invalidation) depuis le backend API Platform. Les composants sont organisés par feature, pas par type.
 
-Tailwind is used for all styling — no separate CSS files unless strictly necessary.
+Tailwind est utilisé pour tout le style — pas de fichiers CSS séparés sauf nécessité absolue.
 
 ### Docker
 
-Development images include Xdebug and mount source directories as volumes. Production images are optimized builds with no dev dependencies. PostgreSQL data is persisted via a named Docker volume. PostgreSQL port is not exposed publicly.
-
-## Environment Variables
-
-<!-- Document required .env variables here (backend and frontend) once defined. -->
+Les images de développement incluent Xdebug et montent les répertoires sources en volumes. Les images de production sont des builds optimisés sans dépendances de dev. Les données PostgreSQL sont persistées via un volume Docker nommé. Le port PostgreSQL n'est jamais exposé publiquement.
 
 ## Conventions
-
-### Naming
-
-<!-- Document entity, service, component, and file naming conventions here. -->
-
-### Feature Structure
-
-<!-- Document how a new feature is organized across backend (entity, service, API resource) and frontend (route, query, components). -->
 
 ### GitHub Issues
 
 #### User Stories (US) — rédigées par le PO
-- Titre : `#X-US- <titre>` où X est l'ID de l'issue GitHub
+- Titre : `#X-US : <titre>` où X est l'ID de l'issue GitHub
 - Langue : français
 - Format du corps : Gherkin (`Feature`, `Scenario`, `Given`, `When`, `Then`)
 
 #### Technical Stories (TS) — rédigées par l'Architecte ou le DevOps
-- Titre : `#X-TS- <titre>` où X est l'ID de l'issue GitHub
+- Titre : `#X-TS : <titre>` où X est l'ID de l'issue GitHub
 - Corps : liste de tâches (`- [ ] action`)
 - Choix du rédacteur pour les TS transverses : décidé par le product owner
 
 ## Feature Workflow
 
-### Gates de validation
+Flux détaillé (gates, diagrammes, points clés) : [`docs/workflow.md`](docs/workflow.md)
 
-Les ⏸ gates sont des points d'arrêt où l'utilisateur doit valider avant que le flux continue. Aucun agent ne démarre après un gate sans feu vert explicite.
+### Résumé
 
-| Gate | Flux | Après | Avant |
-|---|---|---|---|
-| ⏸ Gate 1 | US | PO | Architecte |
-| ⏸ Gate 2 | US | Architecte | Backend Developer + UI/UX Designer |
-| ⏸ Gate 3 | US | UI/UX Designer | Frontend Developer |
-| ⏸ Gate 4 | US | Security & Code Reviewer | QA |
-| ⏸ Gate 5 | US | QA | Documentaliste + DevOps |
-| ⏸ Gate TS1 | TS-Technique, TS-Transverse | Architecte (rédaction TS) | Backend/Frontend Developer |
-| ⏸ Gate TSI1 | TS-Infra | DevOps (rédaction TS) | DevOps (implémentation) |
-| ⏸ Gate TS2 / TSI2 | TS-Technique / TS-Infra | Security & Code Reviewer | QA / merge |
-| ⏸ Gate TS3 | TS-Technique | QA | DevOps |
+Chaque ⏸ gate est un point d'arrêt — aucun agent ne démarre sans feu vert explicite de l'utilisateur.
 
-### Flux US (User Story)
+**Flux US :** PO → ⏸1 → Architecte → ⏸2 → Backend Dev ‖ UI/UX → ⏸3 → Frontend Dev → Security Reviewer → ⏸4 → QA → ⏸5 → Documentaliste ‖ DevOps
 
-```
-PO
-└── Rédige la user story + critères d'acceptance
-    │
-    ▼
-⏸ Gate 1 — validation utilisateur
-    │
-    ▼
-Architecte
-└── Définit le contrat API (endpoints, types partagés)
-    └── Valide le modèle de données
-    │
-    ▼
-⏸ Gate 2 — validation utilisateur
-    │
-    ▼
-┌──────────────────────┬──────────────────────┐
-Backend Developer      UI/UX Designer
-└── Entité + migration └── Maquettes
-└── Service + tests    └── Specs design
-└── API Resource       │
-    │                  ▼
-    │              ⏸ Gate 3 — validation utilisateur
-    │                  │
-    │         Frontend Developer
-    │         └── Routes + composants
-    │         └── Queries (mockées puis réelles)
-    │         └── Tests
-    │                  │
-    └──────────────────┘
-                │
-                ▼
-    Security & Code Reviewer
-        └── Revue sécurité + qualité
-                │
-                ▼
-        ⏸ Gate 4 — validation utilisateur
-                │
-                ▼
-               QA
-        └── Tests d'intégration + E2E
-                │
-                ▼
-        ⏸ Gate 5 — validation utilisateur
-                │
-         ┌──────┴──────┐
-   Documentaliste    DevOps
-   └── Docs API      └── Déploiement
-```
+**Flux TS-Technique :** Architecte → ⏸TS1 → Backend/Frontend Dev → Security Reviewer → ⏸TS2 → QA → ⏸TS3 → DevOps
 
-**Points clés :**
-- Backend et UI/UX travaillent en parallèle — ils sont indépendants
-- Frontend démarre dès que l'UI/UX a terminé **et que le Gate 3 est franchi**
-- Frontend branche sur la vraie API quand le Backend est prêt
-- Security & Code Reviewer intervient avant QA — on corrige avant de valider
-- QA valide sur du code déjà revu et sécurisé
+**Flux TS-Infra :** DevOps → ⏸TSI1 → DevOps → Security Reviewer → ⏸TSI2 → merge
 
-### Flux TS (Technical Story)
-
-Trois types de TS, chacun avec son propre flux.
-
-#### TS-Infra — infrastructure, Docker, CI/CD, secrets
-
-```
-DevOps
-└── Rédige la TS + liste de tâches
-    │
-    ▼
-⏸ Gate TSI1 — validation utilisateur
-    │
-    ▼
-DevOps
-└── Implémente
-    │
-    ▼
-Security & Code Reviewer
-    └── Revue sécurité + qualité
-        │
-        ▼
-⏸ Gate TSI2 — validation utilisateur
-        │
-        ▼
-      merge
-```
-
-#### TS-Technique — migration, refactoring, modèle de données
-
-```
-Architecte
-└── Rédige la TS + liste de tâches
-    └── Spécifie le contrat technique
-        │
-        ▼
-⏸ Gate TS1 — validation utilisateur
-        │
-        ▼
-Backend Developer (et/ou Frontend Developer)
-└── Implémente les tâches
-    │
-    ▼
-Security & Code Reviewer
-    └── Revue sécurité + qualité
-        │
-        ▼
-⏸ Gate TS2 — validation utilisateur
-        │
-        ▼
-       QA
-└── Tests de non-régression
-        │
-        ▼
-⏸ Gate TS3 — validation utilisateur
-        │
-        ▼
-     DevOps
-└── Déploiement
-```
-
-#### TS-Transverse — cross-cutting (auth, observabilité, typage partagé)
-
-Le PO choisit l'initiateur (Architecte ou DevOps), puis le flux TS-Technique s'applique.
-
-**Points clés :**
-- Le PO n'intervient pas dans les TS sauf pour les TS-Transverses (choix de l'initiateur)
-- L'UI/UX Designer n'intervient jamais dans un flux TS
-- Le QA est allégé sur les TS : tests de non-régression uniquement, pas de validation des critères d'acceptance métier
-- Une TS-Infra sans impact sur le code applicatif ne nécessite pas de passage QA
+**Flux TS-Transverse :** initiateur choisi par le PO, puis flux TS-Technique.
 
 ## Git Workflow
 
@@ -314,9 +170,6 @@ git tag -a 2026.04.20 -m "Description du déploiement"
 git push origin 2026.04.20
 ```
 
-## Deployment
-
-<!-- Document the production deployment process here (server setup, Docker, migrations, etc.). -->
 
 ## Rapports de validation sur les PR
 
@@ -362,7 +215,7 @@ Ces règles s'appliquent à tous les agents sans exception.
 
 Each agent has a defined scope, toolset, and model. Agents do not overlap in write responsibilities.
 
-Skills are installed in `.agents/skills/` and invoked via `/skill-name`.
+Skills are installed by skills.sh in `.agents/skills/` (symlinked into `.claude/skills/`) and invoked via `/po`, `/architecte`, etc.
 
 | Agent | Model | Tools | Skills |
 |---|---|---|---|
@@ -373,5 +226,5 @@ Skills are installed in `.agents/skills/` and invoked via `/skill-name`.
 | **UI/UX Designer** | Sonnet | Read, Write, Glob, WebSearch, WebFetch | `/frontend-design`, `/vercel-composition-patterns`, `/ui-ux-pro-max`, `/canvas-design`, `/react-components`, `/tailwind-design-system` |
 | **QA** | Sonnet | Read, Write, Edit, Glob, Grep, Bash | `/systematic-debugging`, `/test-driven-development`, `/webapp-testing`, `/verification-before-completion`, `/playwright-best-practices` |
 | **DevOps** | Sonnet | Read, Write, Edit, Glob, Grep, Bash | `/github-actions-templates`, `/using-git-worktrees`, `/finishing-a-development-branch` |
-| **Security & Code Reviewer** | Opus | Read, Glob, Grep, WebSearch, WebFetch | `/audit`, `/requesting-code-review`, `/code-review-excellence` |
-| **Documentaliste** | Haiku | Read, Write, Edit, Glob, Grep, WebSearch, WebFetch | `/clarify`, `/distill`, `/writing-skills`, `/doc-coauthoring` |
+| **Security & Code Reviewer** | Opus | Read, Glob, Grep, Bash, WebSearch, WebFetch | `/audit`, `/systematic-debugging`, `/code-review-excellence` |
+| **Documentaliste** | Haiku | Read, Write, Edit, Glob, Grep, WebSearch, WebFetch | `/clarify`, `/distill`, `/writing-skills`, `/doc-coauthoring`, `/verification-before-completion` |
