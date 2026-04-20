@@ -10,7 +10,6 @@ services:
       JWT_SECRET_KEY: "%kernel.project_dir%/config/jwt/private.pem"
       JWT_PUBLIC_KEY: "%kernel.project_dir%/config/jwt/public.pem"
       JWT_PASSPHRASE: ${JWT_PASSPHRASE}
-      SENTRY_DSN: ${SENTRY_DSN}
     depends_on:
       postgres:
         condition: service_healthy
