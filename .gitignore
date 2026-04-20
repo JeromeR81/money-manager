@@ -8,13 +8,10 @@ backend/config/jwt/private.pem
 backend/config/jwt/public.pem
 
 # Dépendances
-backend/vendor/
 frontend/node_modules/
 
 # Build
 frontend/dist/
-backend/var/cache/
-backend/var/log/
 
 # IDE
 .idea/
