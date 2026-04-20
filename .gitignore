@@ -1,7 +1,7 @@
-# Environnement
-.env
-.env.local
-.env.*.local
+# Environnement (racine uniquement — backend/.env est versionné comme template Symfony)
+/.env
+/.env.local
+/.env.*.local
 
 # Clés JWT
 backend/config/jwt/private.pem
