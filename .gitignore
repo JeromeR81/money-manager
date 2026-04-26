@@ -1,20 +1,17 @@
-# Environnement
-.env
-.env.local
-.env.*.local
+# Environnement (racine uniquement — backend/.env est versionné comme template Symfony)
+/.env
+/.env.local
+/.env.*.local
 
 # Clés JWT
 backend/config/jwt/private.pem
 backend/config/jwt/public.pem
 
 # Dépendances
-backend/vendor/
 frontend/node_modules/
 
 # Build
 frontend/dist/
-backend/var/cache/
-backend/var/log/
 
 # IDE
 .idea/
