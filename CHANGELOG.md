@@ -4,6 +4,11 @@
 
 ### Changed
 - Nginx dev : port hôte changé de 80 à 8080 (issue #11) — compatibilité Docker rootless (`ip_unprivileged_port_start=1024`)
+- Commandes CLAUDE.md restructurées autour des cibles `make` (issue #13)
+- Flux TS-Infra : ajout d'une étape Documentaliste conditionnelle après Gate TSI2 (si impact sur commandes ou config utilisateur)
+
+### Added
+- Makefile à la racine avec raccourcis pour Docker, Symfony, Composer, npm et tests (issue #13) — `make help` liste toutes les cibles
 
 ### Added
 - Stack backend initialisée (issue #6)
