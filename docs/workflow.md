@@ -13,7 +13,7 @@ Les ⏸ gates sont des points d'arrêt où l'utilisateur doit valider avant que 
 | ⏸ Gate 5 | US | QA | Documentaliste + DevOps |
 | ⏸ Gate TS1 | TS-Technique, TS-Transverse | Architecte (rédaction TS) | Backend/Frontend Developer |
 | ⏸ Gate TSI1 | TS-Infra | DevOps (rédaction TS) | DevOps (implémentation) |
-| ⏸ Gate TS2 / TSI2 | TS-Technique / TS-Infra | Security & Code Reviewer | QA / merge |
+| ⏸ Gate TS2 / TSI2 | TS-Technique / TS-Infra | Security & Code Reviewer | QA / Documentaliste (si applicable) / merge |
 | ⏸ Gate TS3 | TS-Technique | QA | DevOps |
 
 ## Flux US (User Story)
@@ -100,6 +100,10 @@ Security & Code Reviewer
 ⏸ Gate TSI2 — validation utilisateur
         │
         ▼
+Documentaliste (si impact sur commandes ou config utilisateur)
+└── Mise à jour documentation
+        │
+        ▼
       merge
 ```
 
@@ -145,3 +149,4 @@ Le PO choisit l'initiateur (Architecte ou DevOps), puis le flux TS-Technique s'a
 - L'UI/UX Designer n'intervient jamais dans un flux TS
 - Le QA est allégé sur les TS : tests de non-régression uniquement, pas de validation des critères d'acceptance métier
 - Une TS-Infra sans impact sur le code applicatif ne nécessite pas de passage QA
+- Une TS-Infra avec impact sur les commandes ou la configuration utilisateur déclenche un passage Documentaliste après Gate TSI2

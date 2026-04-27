@@ -28,20 +28,25 @@ docker-compose.prod.yml     # Production
 
 ## Commandes
 
+> Un `Makefile` est disponible à la racine — `make help` liste toutes les cibles disponibles.
+
 ### Setup initial
 
 ```bash
-cp .env.example .env                  # Copier et renseigner les variables
-bash devops/generate-jwt-keys.sh      # Générer les clés JWT RS256
-docker compose up -d                  # Démarrer tous les services
+make setup   # Copie .env.example → .env (si absent), génère les clés JWT, démarre Docker
 ```
+
+Si `.env` n'existe pas, `make setup` le crée et s'arrête — renseigne les variables, puis relance.
 
 ### Docker (dev)
 
 ```bash
-docker compose up -d          # Démarrer tous les services
-docker compose down           # Arrêter tous les services
-docker compose logs -f        # Suivre les logs
+make up       # Démarrer tous les services
+make down     # Arrêter tous les services
+make logs     # Suivre les logs (Ctrl+C pour quitter)
+make restart  # Redémarrer tous les services
+make ps       # État des conteneurs
+make build    # Rebuild les images sans cache
 ```
 
 ### Services dev
@@ -59,37 +64,38 @@ docker compose logs -f        # Suivre les logs
 ### Backend (Symfony)
 
 ```bash
-docker compose exec php composer install
-docker compose exec php bin/console cache:clear
-docker compose exec php bin/console doctrine:migrations:migrate
-docker compose exec php bin/console doctrine:migrations:diff   # Générer une migration depuis les changements d'entités
+make install                          # Installer les dépendances Composer
+make cc                               # Vider le cache Symfony
+make migrate                          # Exécuter les migrations Doctrine
+make diff                             # Générer une migration depuis les entités
+make sf c="about"                     # Commande console libre
+make require p="vendor/package"       # Ajouter une dépendance Composer
+make require-dev p="vendor/package"   # Ajouter une dépendance dev
 ```
 
 ### Frontend
 
 ```bash
-cd frontend
-npm install
-npm run dev        # Démarrer le serveur de dev Vite
-npm run build      # Build de production
-npm run lint       # ESLint
+make npm-install                  # Installer les dépendances npm (conteneur)
+make lint                         # Lancer ESLint
+make npm-add p="package"          # Ajouter une dépendance npm
+make npm-add-dev p="package"      # Ajouter une dépendance npm dev
 ```
 
 ### Tests
 
 ```bash
-# Backend
-docker compose exec php bin/phpunit
-docker compose exec php bin/phpunit tests/Unit/MyTest.php   # Fichier de test unique
+make test           # Tous les tests (backend + frontend)
+make test-back      # PHPUnit (backend)
+make test-front     # Vitest (frontend, exécution unique)
+make test-e2e       # Playwright (E2E)
+```
 
-# Frontend — unitaires/composants
-cd frontend
-npm run test              # Vitest (mode watch)
-npm run test -- --run     # Vitest (exécution unique)
+Tests ciblés :
 
-# Frontend — E2E
-npm run test:e2e          # Playwright
-npm run test:e2e -- --grep "nom du test"   # Test E2E unique
+```bash
+docker compose exec php bin/phpunit tests/Unit/MyTest.php              # PHPUnit fichier unique
+docker compose exec node npm run test:e2e -- --grep "nom du test"      # Playwright test unique
 ```
 
 ## Architecture
@@ -136,7 +142,7 @@ Chaque ⏸ gate est un point d'arrêt — aucun agent ne démarre sans feu vert 
 
 **Flux TS-Technique :** Architecte → ⏸TS1 → Backend/Frontend Dev → Security Reviewer → ⏸TS2 → QA → ⏸TS3 → DevOps
 
-**Flux TS-Infra :** DevOps → ⏸TSI1 → DevOps → Security Reviewer → ⏸TSI2 → merge
+**Flux TS-Infra :** DevOps → ⏸TSI1 → DevOps → Security Reviewer → ⏸TSI2 → Documentaliste *(si impact sur commandes ou config utilisateur)* → merge
 
 **Flux TS-Transverse :** initiateur choisi par le PO, puis flux TS-Technique.
 

@@ -43,10 +43,11 @@ devops/docker/prod/         # Dockerfiles prod
 ## Commandes utiles
 
 ```bash
-docker compose up -d
-docker compose down
-docker compose logs -f
-docker compose exec php bin/console doctrine:migrations:migrate
+make up        # Démarrer tous les services
+make down      # Arrêter tous les services
+make logs      # Suivre les logs
+make migrate   # Exécuter les migrations Doctrine
+make build     # Rebuild les images sans cache
 ```
 
 ## Règles d'honnêteté
@@ -69,6 +70,7 @@ docker compose exec php bin/console doctrine:migrations:migrate
 - [ ] Toutes les tâches sont implémentées et testées en environnement dev
 - [ ] La revue Security & Code Reviewer a été obtenue (feu vert explicite)
 - [ ] Aucun secret ni port sensible n'est exposé
+- [ ] Si impact sur commandes ou config utilisateur : feu vert Documentaliste obtenu avant merge
 
 Si une étape échoue, tu ne passes pas à la suivante et tu documentes l'erreur avant d'intervenir.
 
@@ -79,6 +81,11 @@ Si une étape échoue, tu ne passes pas à la suivante et tu documentes l'erreur
 > ⏸ **Gate TSI1 — validation requise**
 > Livraison : TS rédigée avec liste de tâches complète
 > Prochain : implémentation (DevOps) — en attente de ton feu vert
+
+**Pour une TS-Infra (après Gate TSI2 — prêt pour merge) :**
+
+Si impact sur commandes ou config utilisateur : attendre le feu vert Documentaliste avant de merger.
+Sinon : merger directement.
 
 Le déploiement (fin de flux US ou TS-Technique) ne nécessite pas de gate — il est déclenché après le Gate 5 / Gate TS3 que tu as déjà validé.
 
