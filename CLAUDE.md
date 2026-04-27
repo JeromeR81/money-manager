@@ -48,7 +48,7 @@ docker compose logs -f        # Suivre les logs
 
 | Service | URL |
 |---|---|
-| API Backend | http://localhost |
+| API Backend | http://localhost:8080 |
 | Frontend Vite | http://localhost:5173 |
 | RabbitMQ Management | http://localhost:15672 |
 | Mailpit | http://localhost:8025 |

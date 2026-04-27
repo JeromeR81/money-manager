@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Changed
+- Nginx dev : port hôte changé de 80 à 8080 (issue #11) — compatibilité Docker rootless (`ip_unprivileged_port_start=1024`)
+
 ### Added
 - Stack backend initialisée (issue #6)
   - Symfony 7.4.8 LTS (`symfony/skeleton`)
@@ -11,7 +14,7 @@
   - symfony/messenger (transport RabbitMQ via `MESSENGER_TRANSPORT_DSN`)
   - symfony/mailer (Mailpit en dev via `MAILER_DSN`)
   - nelmio/cors-bundle 2.6.1
-  - API disponible sur `http://localhost/api`, Swagger UI sur `http://localhost/api/docs`
+  - API disponible sur `http://localhost:8080/api`, Swagger UI sur `http://localhost:8080/api/docs`
   - Correction Dockerfile PHP : `opcache` retiré de `docker-php-ext-install` (compilé statiquement en PHP 8.5), `xdebug.ini` renommé pour ne pas écraser le fichier généré par `docker-php-ext-enable`
 
 - Infrastructure Docker complète (issue #3, PR #4)
