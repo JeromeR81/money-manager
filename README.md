@@ -11,34 +11,22 @@ Application personnelle de gestion financière.
 ### Prérequis
 
 - Docker Desktop ≥ 4.24 (Docker Compose v2.20+)
+- `make` (inclus sur macOS et Linux)
 - `openssl` disponible en ligne de commande
 
-### 1. Configuration
+### Installation
 
 ```bash
-cp .env.example .env
-# Renseigner les mots de passe dans .env (remplacer tous les "change_me")
+make setup
 ```
 
-### 2. Clés JWT
-
-```bash
-bash devops/generate-jwt-keys.sh
-# Génère backend/config/jwt/private.pem et public.pem
-# Écrit JWT_PASSPHRASE dans .env automatiquement
-```
-
-### 3. Démarrage
-
-```bash
-docker compose up -d
-```
+`make setup` copie `.env.example` vers `.env` (si absent), génère les clés JWT RS256, puis démarre tous les services Docker. Si `.env` vient d'être créé, renseigne les mots de passe (remplace les `change_me`), puis relance `make setup`.
 
 ### Services accessibles en dev
 
 | Service | URL | Credentials |
 |---|---|---|
-| API Backend | http://localhost | — |
+| API Backend | http://localhost:8080 | — |
 | Frontend (Vite) | http://localhost:5173 | — |
 | RabbitMQ Management | http://localhost:15672 | `RABBITMQ_USER` / `RABBITMQ_PASSWORD` |
 | Mailpit (emails) | http://localhost:8025 | — |
