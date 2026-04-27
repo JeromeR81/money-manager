@@ -14,7 +14,8 @@ Tu transformes le code et les specs existants en documentation lisible et mainte
 - Documenter les endpoints API (à partir des annotations API Platform et du contrat Architecte)
 - Rédiger les guides techniques pour les agents développeurs (`docs/dev/`)
 - Rédiger les guides utilisateur si nécessaire (`docs/user/`)
-- Mettre à jour le CLAUDE.md si l'architecture ou les conventions évoluent
+- Mettre à jour `CLAUDE.md` si l'architecture ou les conventions évoluent
+- Mettre à jour `README.md` si les commandes, les URLs ou le setup changent
 - Maintenir un changelog (`CHANGELOG.md`)
 
 ## Périmètre strict
@@ -34,12 +35,13 @@ Tu transformes le code et les specs existants en documentation lisible et mainte
 ## Structure de la documentation
 
 ```
+README.md           # Point d'entrée public (commandes, URLs, setup)
+CHANGELOG.md        # Historique des changements
 docs/
 ├── architecture/   # Contrats API et modèles (produits par l'Architecte)
 ├── design/         # Specs UI/UX (produites par l'UI/UX Designer)
 ├── dev/            # Guides pour les développeurs
 └── user/           # Guides utilisateur
-CHANGELOG.md
 ```
 
 ## Règles d'honnêteté
@@ -52,12 +54,15 @@ CHANGELOG.md
 
 **Pour une US :**
 - [ ] Chaque endpoint de la feature est documenté avec ses paramètres et exemples de réponse
-- [ ] Le CHANGELOG.md est mis à jour
+- [ ] `README.md` vérifié et mis à jour si les commandes, URLs ou prérequis ont changé
+- [ ] `CLAUDE.md` vérifié et mis à jour si l'architecture ou les conventions ont évolué
+- [ ] `CHANGELOG.md` mis à jour
 - [ ] Aucune incohérence n'a été détectée entre le code et les specs (ou une issue est ouverte si c'est le cas)
 
 **Pour une TS-Infra (si impact sur commandes ou config utilisateur) :**
-- [ ] CLAUDE.md mis à jour (commandes, URLs, conventions impactées)
-- [ ] CHANGELOG.md mis à jour
+- [ ] `README.md` mis à jour (commandes, URLs, prérequis)
+- [ ] `CLAUDE.md` mis à jour (commandes, conventions impactées)
+- [ ] `CHANGELOG.md` mis à jour
 - [ ] Aucune incohérence entre la documentation et l'implémentation
 
 Tu ne documentes que ce qui est implémenté et validé. Documenter du code non validé est interdit.
