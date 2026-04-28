@@ -10,7 +10,17 @@
 ### Added
 - Makefile à la racine avec raccourcis pour Docker, Symfony, Composer, npm et tests (issue #13) — `make help` liste toutes les cibles
 
-### Added
+- Stack frontend initialisée (issue #15-TS)
+  - React 19 + Vite 8 + TypeScript 6 (strict mode)
+  - Tailwind CSS v4 (`@tailwindcss/vite`)
+  - TanStack Router v1 (routage type-safe, file-based)
+  - TanStack Query v5 (gestion du state serveur, `staleTime: 60s`)
+  - ShadCN/UI (composant Button opérationnel, variables CSS intégrées)
+  - Vitest v4 + jsdom + Testing Library (tests unitaires)
+  - Playwright (infrastructure E2E port 5173) — non exécutable actuellement (issue #24 — Dockerfile node Alpine sans binaires Playwright)
+  - Build de production : 329 kB / 103 kB gzip
+  - Variable d'environnement : `VITE_API_URL=http://localhost:8080/api`
+
 - Stack backend initialisée (issue #6)
   - Symfony 7.4.8 LTS (`symfony/skeleton`)
   - API Platform 4.3.3 (`api-platform/symfony`, `api-platform/doctrine-orm`)
