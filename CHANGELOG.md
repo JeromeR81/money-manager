@@ -32,6 +32,13 @@
   - API disponible sur `http://localhost:8080/api`, Swagger UI sur `http://localhost:8080/api/docs`
   - Correction Dockerfile PHP : `opcache` retiré de `docker-php-ext-install` (compilé statiquement en PHP 8.5), `xdebug.ini` renommé pour ne pas écraser le fichier généré par `docker-php-ext-enable`
 
+- Linters et analyse statique (issue #25-TS)
+  - Backend : phpstan niveau 6 + extension phpstan-symfony (`phpstan/phpstan`, `phpstan/extension-installer`, `phpstan/phpstan-symfony`)
+  - Backend : php-cs-fixer avec règles @PSR12 + @Symfony (`friendsofphp/php-cs-fixer`)
+  - Frontend : ESLint mis à jour en mode type-aware (`recommendedTypeChecked` + `parserOptions.project`)
+  - Nouvelles cibles Makefile : `lint` (tous), `lint-back`, `lint-back-stan`, `lint-back-cs`, `fix-back`, `lint-front`
+  - `frontend/.gitignore` : `.vite/` (cache Vite) ajouté
+
 - Infrastructure Docker complète (issue #3, PR #4)
   - Environnement dev : PHP 8.5+Xdebug, Nginx, Node/Vite, PostgreSQL, RabbitMQ, Mailpit, Elasticsearch, Kibana, Filebeat
   - Environnement prod : builds optimisés multi-stage, Elasticsearch sécurisé (`xpack.security.enabled=true`), Kibana sans port public

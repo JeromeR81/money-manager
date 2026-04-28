@@ -77,10 +77,22 @@ make require-dev p="vendor/package"   # Ajouter une dépendance dev
 
 ```bash
 make npm-install                  # Installer les dépendances npm (conteneur)
-make lint                         # Lancer ESLint
 make npm-add p="package"          # Ajouter une dépendance npm
 make npm-add-dev p="package"      # Ajouter une dépendance npm dev
 ```
+
+### Linting
+
+```bash
+make lint                         # Lancer tous les linters (backend + frontend)
+make lint-back                    # Lancer les linters backend (phpstan + php-cs-fixer)
+make lint-back-stan               # Analyser avec phpstan (niveau 6)
+make lint-back-cs                 # Vérifier le style PHP (php-cs-fixer dry-run)
+make fix-back                     # Corriger automatiquement le style PHP
+make lint-front                   # Lancer ESLint (frontend)
+```
+
+Note : `make lint-back-stan` réchauffe automatiquement le cache Symfony avant l'analyse.
 
 ### Tests
 
@@ -140,7 +152,7 @@ Chaque ⏸ gate est un point d'arrêt — aucun agent ne démarre sans feu vert 
 
 **Flux US :** PO → ⏸1 → Architecte → ⏸2 → Backend Dev ‖ UI/UX → ⏸3 → Frontend Dev → Security Reviewer → ⏸4 → QA → ⏸5 → Documentaliste ‖ DevOps
 
-**Flux TS-Technique :** Architecte → ⏸TS1 → Backend/Frontend Dev → Security Reviewer → ⏸TS2 → QA → ⏸TS3 → DevOps
+**Flux TS-Technique :** Architecte → ⏸TS1 → Backend/Frontend Dev → Security Reviewer → ⏸TS2 → QA → ⏸TS3 → Documentaliste → DevOps
 
 **Flux TS-Infra :** DevOps → ⏸TSI1 → DevOps → Security Reviewer → ⏸TSI2 → Documentaliste *(si impact sur commandes ou config utilisateur)* → merge
 
