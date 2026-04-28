@@ -9,14 +9,19 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['tests/**'],
     extends: [
       js.configs.recommended,
-      tseslint.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
     languageOptions: {
       globals: globals.browser,
+      parserOptions: {
+        project: ['./tsconfig.app.json', './tsconfig.node.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
       // TanStack Router exports Route alongside components — false positive
@@ -24,9 +29,15 @@ export default defineConfig([
       'react-refresh/only-export-components': [
         'warn',
         {
+          allowConstantExport: true,
           allowExportNames: ['Route', 'buttonVariants'],
         },
       ],
     },
+  },
+  {
+    files: ['tests/**/*.ts'],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+    languageOptions: { globals: globals.browser },
   },
 ])

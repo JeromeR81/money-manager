@@ -51,13 +51,29 @@ require: ## Ajouter une dépendance  —  usage : make require p="vendor/package
 require-dev: ## Ajouter une dépendance dev  —  usage : make require-dev p="vendor/package"
 	docker compose exec php composer require --dev $(p)
 
+# ── Linting ───────────────────────────────────────────────────────────────────
+
+lint: lint-back lint-front ## Lancer tous les linters (backend + frontend)
+
+lint-back: lint-back-stan lint-back-cs ## Lancer les linters backend (phpstan + php-cs-fixer)
+
+lint-back-stan: ## Analyser le code PHP avec phpstan (niveau 6)
+	docker compose exec php bin/console cache:warmup --env=dev --quiet
+	docker compose exec php vendor/bin/phpstan analyse --memory-limit=256M
+
+lint-back-cs: ## Vérifier le style PHP avec php-cs-fixer (dry-run)
+	docker compose exec php vendor/bin/php-cs-fixer fix --dry-run --diff --config .php-cs-fixer.dist.php
+
+fix-back: ## Corriger automatiquement le style PHP avec php-cs-fixer
+	docker compose exec php vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php
+
+lint-front: ## Lancer ESLint sur le frontend
+	docker compose exec node npm run lint
+
 # ── Frontend / npm (conteneur node) ──────────────────────────────────────────
 
 npm-install: ## Installer les dépendances npm
 	docker compose exec node npm install
-
-lint: ## Lancer ESLint sur le frontend
-	docker compose exec node npm run lint
 
 npm-add: ## Ajouter une dépendance npm  —  usage : make npm-add p="package"
 	docker compose exec node npm install $(p)
@@ -108,6 +124,7 @@ help: ## Afficher cette aide
 .PHONY: up down restart logs ps build \
         cc migrate diff about sf \
         install update require require-dev \
-        npm-install lint npm-add npm-add-dev \
+        lint lint-back lint-back-stan lint-back-cs fix-back lint-front \
+        npm-install npm-add npm-add-dev \
         test test-back test-front test-e2e \
         setup jwt help

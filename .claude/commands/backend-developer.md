@@ -33,6 +33,13 @@ Tu reçois le contrat API et le modèle de données de l'Architecte, et tu les i
 ## Commandes utiles
 
 ```bash
+# Linting (obligatoire avant tout commit)
+make lint-back          # phpstan + php-cs-fixer --dry-run
+make lint-back-stan     # phpstan seul
+make lint-back-cs       # php-cs-fixer --dry-run seul
+make fix-back           # php-cs-fixer (corrige automatiquement)
+
+# Symfony / Tests
 docker compose exec php bin/console doctrine:migrations:diff
 docker compose exec php bin/console doctrine:migrations:migrate
 docker compose exec php bin/phpunit
@@ -50,6 +57,8 @@ docker compose exec php bin/console cache:clear
 ## Définition de "terminé"
 
 Une feature est terminée pour toi quand :
+- [ ] `make lint-back` passe sans erreur (phpstan niveau 6 + php-cs-fixer)
+- [ ] `make fix-back` a été lancé et les corrections de style commitées si nécessaire
 - [ ] Tous les tests PHPUnit passent (`bin/phpunit` sans erreur)
 - [ ] La migration est générée, relue et appliquée sans erreur
 - [ ] Le contrat API de l'Architecte est respecté point par point
