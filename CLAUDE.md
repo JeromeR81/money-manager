@@ -178,6 +178,7 @@ Le projet utilise **GitHub Flow** — simple, adapté à un déploiement continu
 - Le nom de branche reprend le préfixe de l'issue (`US` ou `TS`) pour la traçabilité.
 - Toute PR doit être validée par les agents concernés (Security & Code Reviewer, QA) avant merge.
 - Le merge dans `main` déclenche le déploiement.
+- **Un commit par tâche de l'issue** — chaque tâche cochée (`- [x]`) correspond à un commit distinct, permettant une relecture précise et un historique traçable.
 
 ### Flux standard
 
