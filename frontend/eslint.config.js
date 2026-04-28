@@ -6,9 +6,10 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'tests']),
+  globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    ignores: ['tests/**'],
     extends: [
       js.configs.recommended,
       tseslint.configs.recommendedTypeChecked,
@@ -33,5 +34,10 @@ export default defineConfig([
         },
       ],
     },
+  },
+  {
+    files: ['tests/**/*.ts'],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
+    languageOptions: { globals: globals.browser },
   },
 ])

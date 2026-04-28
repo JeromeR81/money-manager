@@ -58,6 +58,7 @@ lint: lint-back lint-front ## Lancer tous les linters (backend + frontend)
 lint-back: lint-back-stan lint-back-cs ## Lancer les linters backend (phpstan + php-cs-fixer)
 
 lint-back-stan: ## Analyser le code PHP avec phpstan (niveau 6)
+	docker compose exec php bin/console cache:warmup --env=dev --quiet
 	docker compose exec php vendor/bin/phpstan analyse --memory-limit=256M
 
 lint-back-cs: ## Vérifier le style PHP avec php-cs-fixer (dry-run)
