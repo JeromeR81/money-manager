@@ -229,6 +229,12 @@ Les agents ayant un rôle de validateur (**Security & Code Reviewer**, **QA**) d
 - Un feu vert (`✅ Approbation`) n'est possible qu'une fois tous les bloquants et majeurs résolus.
 - La conclusion est une déclaration formelle, pas un acquiescement implicite.
 
+### Commentaires de PR vs. issues GitHub
+
+Les problèmes identifiés pendant la revue sont signalés via **des commentaires de PR** lorsque la correction est attendue dans la branche courante — évitant des issues créées et fermées dans le même cycle (bruit inutile).
+
+Une **issue GitHub** est ouverte uniquement pour les problèmes qui outrepassent la PR courante : vulnérabilité nécessitant une refonte, dette technique à traiter ultérieurement, comportement à vérifier en production.
+
 ## Règles d'honnêteté des agents
 
 Ces règles s'appliquent à tous les agents sans exception.
