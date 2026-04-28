@@ -39,6 +39,16 @@
   - Nouvelles cibles Makefile : `lint` (tous), `lint-back`, `lint-back-stan`, `lint-back-cs`, `fix-back`, `lint-front`
   - `frontend/.gitignore` : `.vite/` (cache Vite) ajouté
 
+- Authentification JWT via cookies HttpOnly (issue #16-TS)
+  - Entité `User` (email, password, roles) + migration Doctrine
+  - `POST /api/auth/login` : authentification email/password → cookie `BEARER` (HttpOnly, Secure, SameSite=Strict, TTL 900s)
+  - `POST /api/auth/logout` : effacement du cookie `BEARER`
+  - `CookieTokenExtractor` + `AccessTokenHandler` pour l'authentification sans état (Symfony 7.4 `access_token` natif)
+  - Rate limiting : 5 req/60s par IP (sliding_window) → HTTP 429 si dépassé
+  - Sécurité : timing attack mitigation (validation systématique même pour utilisateur absent)
+  - `AuthOpenApiDecorator` : endpoints auth + schéma `cookieAuth` dans Swagger UI
+  - 9 tests PHPUnit fonctionnels (AuthTest) : login valide/invalide, protection endpoint, rate limiting, déconnexion
+
 - Infrastructure Docker complète (issue #3, PR #4)
   - Environnement dev : PHP 8.5+Xdebug, Nginx, Node/Vite, PostgreSQL, RabbitMQ, Mailpit, Elasticsearch, Kibana, Filebeat
   - Environnement prod : builds optimisés multi-stage, Elasticsearch sécurisé (`xpack.security.enabled=true`), Kibana sans port public
