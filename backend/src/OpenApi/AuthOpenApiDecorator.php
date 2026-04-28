@@ -66,7 +66,8 @@ final class AuthOpenApiDecorator implements OpenApiFactoryInterface
             ),
         ))
             ->addResponse(new Response(description: 'Cookie BEARER posé'), 200)
-            ->addResponse(new Response(description: 'Identifiants invalides'), 401);
+            ->addResponse(new Response(description: 'Identifiants invalides'), 401)
+            ->addResponse(new Response(description: 'Trop de tentatives — réessayez dans 60 secondes'), 429);
 
         $openApi->getPaths()->addPath('/api/auth/login', new PathItem(post: $loginOperation));
     }
@@ -77,7 +78,7 @@ final class AuthOpenApiDecorator implements OpenApiFactoryInterface
             operationId: 'postApiAuthLogout',
             tags: ['Auth'],
             summary: 'Déconnexion — effacer le cookie JWT',
-            security: [['cookieAuth' => []]],
+            security: [],
         ))
             ->addResponse(new Response(description: 'Cookie BEARER effacé'), 200);
 
