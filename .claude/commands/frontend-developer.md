@@ -37,10 +37,15 @@ Tu reçois les specs de l'UI/UX Designer et le contrat API de l'Architecte. Tu p
 ## Commandes utiles
 
 ```bash
+# Linting (obligatoire avant tout commit)
+make lint-front        # ESLint type-aware (depuis la racine)
+make lint              # Lint global back + front (depuis la racine)
+
+# Développement
 cd frontend
 npm run dev
 npm run build
-npm run lint
+npm run lint           # Équivalent à make lint-front
 npm run test -- --run
 npm run test:e2e
 npm run test:e2e -- --grep "test name"
@@ -56,6 +61,7 @@ npm run test:e2e -- --grep "test name"
 ## Définition de "terminé"
 
 Une feature est terminée pour toi quand :
+- [ ] `make lint-front` passe sans erreur ni warning (ESLint type-aware)
 - [ ] Tous les tests Vitest passent (`npm run test -- --run` sans erreur)
 - [ ] Le build de production réussit (`npm run build` sans erreur)
 - [ ] Les tests Playwright E2E couvrent les critères d'acceptance de la feature
