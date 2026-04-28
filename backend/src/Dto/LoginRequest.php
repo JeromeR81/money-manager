@@ -14,6 +14,7 @@ final class LoginRequest
         public readonly string $email,
 
         #[Assert\NotBlank]
+        #[Assert\Length(max: 4096)]
         public readonly string $password,
     ) {
     }

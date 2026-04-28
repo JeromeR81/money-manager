@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimiterFactory;
 
 final class AuthTest extends WebTestCase
 {
@@ -47,6 +48,11 @@ final class AuthTest extends WebTestCase
         $em->persist($admin);
 
         $em->flush();
+
+        /** @var RateLimiterFactory $limiterFactory */
+        $limiterFactory = $container->get('limiter.login_throttle');
+        $limiterFactory->create('127.0.0.1')->reset();
+        $limiterFactory->create('10.0.0.99')->reset();
 
         static::ensureKernelShutdown();
     }
@@ -144,6 +150,33 @@ final class AuthTest extends WebTestCase
         $bearerCookie = $this->getBearerCookie($client);
         self::assertNotNull($bearerCookie, 'Cookie BEARER doit être présent dans la réponse logout');
         self::assertLessThanOrEqual(1, $bearerCookie->getExpiresTime(), 'Cookie BEARER doit être expiré');
+    }
+
+    public function testLoginInvalidJson(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], 'not-valid-json');
+
+        self::assertResponseStatusCodeSame(401);
+    }
+
+    public function testLoginRateLimiting(): void
+    {
+        $client = static::createClient([], ['REMOTE_ADDR' => '10.0.0.99']);
+
+        for ($i = 0; $i < 5; ++$i) {
+            $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], (string) json_encode([
+                'email' => 'nobody@money-manager.local',
+                'password' => 'wrong',
+            ]));
+            self::assertResponseStatusCodeSame(401);
+        }
+
+        $client->request('POST', '/api/auth/login', [], [], ['CONTENT_TYPE' => 'application/json'], (string) json_encode([
+            'email' => 'nobody@money-manager.local',
+            'password' => 'wrong',
+        ]));
+        self::assertResponseStatusCodeSame(429);
     }
 
     private function getBearerCookie(\Symfony\Bundle\FrameworkBundle\KernelBrowser $client): ?\Symfony\Component\HttpFoundation\Cookie

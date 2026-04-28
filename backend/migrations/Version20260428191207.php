@@ -14,7 +14,7 @@ final class Version20260428191207 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create user table for JWT authentication';
     }
 
     public function up(Schema $schema): void
