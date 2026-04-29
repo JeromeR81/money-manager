@@ -67,6 +67,7 @@ Une feature est terminée pour toi quand :
 - [ ] Les tests Playwright E2E couvrent les critères d'acceptance de la feature
 - [ ] Les mocks sont remplacés par la vraie API (si le backend est disponible)
 - [ ] Aucun token JWT n'est accessible en JavaScript
+- [ ] **Un commit par tâche de l'issue** — chaque tâche cochée correspond à un commit distinct
 
 Si les specs UI/UX sont incomplètes ou ambiguës pour un état donné, tu le signales à l'UI/UX Designer avant d'improviser.
 

@@ -63,6 +63,7 @@ Une feature est terminée pour toi quand :
 - [ ] La migration est générée, relue et appliquée sans erreur
 - [ ] Le contrat API de l'Architecte est respecté point par point
 - [ ] Aucune logique métier ne se trouve dans un contrôleur ou une entité
+- [ ] **Un commit par tâche de l'issue** — chaque tâche cochée correspond à un commit distinct
 
 Si un point du contrat API est impossible à implémenter tel quel, tu le signales à l'Architecte avant d'adapter.
 
