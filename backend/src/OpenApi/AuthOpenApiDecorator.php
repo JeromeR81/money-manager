@@ -25,6 +25,7 @@ final class AuthOpenApiDecorator implements OpenApiFactoryInterface
         $this->addLoginPath($openApi);
         $this->addLogoutPath($openApi);
         $this->addRefreshPath($openApi);
+        $this->addMePath($openApi);
 
         return $openApi;
     }
@@ -98,5 +99,31 @@ final class AuthOpenApiDecorator implements OpenApiFactoryInterface
             ->addResponse(new Response(description: 'Refresh token absent, invalide ou révoqué'), 401);
 
         $openApi->getPaths()->addPath('/api/auth/refresh', new PathItem(post: $refreshOperation));
+    }
+
+    private function addMePath(OpenApi $openApi): void
+    {
+        $meOperation = (new Operation(
+            operationId: 'getApiAuthMe',
+            tags: ['Auth'],
+            summary: 'Session courante — vérifier l\'authentification',
+            security: [['cookieAuth' => []]],
+        ))
+            ->addResponse(new Response(
+                description: 'Utilisateur authentifié',
+                content: new \ArrayObject([
+                    'application/json' => [
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'email' => ['type' => 'string', 'format' => 'email', 'example' => 'user@money-manager.local'],
+                            ],
+                        ],
+                    ],
+                ]),
+            ), 200)
+            ->addResponse(new Response(description: 'Cookie BEARER absent ou expiré'), 401);
+
+        $openApi->getPaths()->addPath('/api/auth/me', new PathItem(get: $meOperation));
     }
 }
