@@ -4,12 +4,12 @@ export const API_URL: string =
   (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8080/api'
 
 export class HttpError extends Error {
-  constructor(
-    message: string,
-    public readonly status: number,
-  ) {
+  readonly status: number
+
+  constructor(message: string, status: number) {
     super(message)
     this.name = 'HttpError'
+    this.status = status
   }
 }
 
