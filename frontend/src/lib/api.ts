@@ -56,7 +56,6 @@ export async function fetchApi<T>(path: string, options?: RequestInit): Promise<
       return retry.json() as Promise<T>
     }
 
-    queryClient.removeQueries({ queryKey: ['auth', 'me'] })
     window.location.href = '/login'
     throw new HttpError('Session expirée', 401)
   }
