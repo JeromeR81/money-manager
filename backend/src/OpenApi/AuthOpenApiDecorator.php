@@ -24,6 +24,7 @@ final class AuthOpenApiDecorator implements OpenApiFactoryInterface
         $openApi = $this->addSecurityScheme($openApi);
         $this->addLoginPath($openApi);
         $this->addLogoutPath($openApi);
+        $this->addRefreshPath($openApi);
 
         return $openApi;
     }
@@ -83,5 +84,19 @@ final class AuthOpenApiDecorator implements OpenApiFactoryInterface
             ->addResponse(new Response(description: 'Cookie BEARER effacé'), 200);
 
         $openApi->getPaths()->addPath('/api/auth/logout', new PathItem(post: $logoutOperation));
+    }
+
+    private function addRefreshPath(OpenApi $openApi): void
+    {
+        $refreshOperation = (new Operation(
+            operationId: 'postApiAuthRefresh',
+            tags: ['Auth'],
+            summary: 'Renouvellement de session — rotation du refresh token',
+            security: [],
+        ))
+            ->addResponse(new Response(description: 'Nouveaux cookies BEARER et REFRESH_TOKEN posés'), 200)
+            ->addResponse(new Response(description: 'Refresh token absent, invalide ou révoqué'), 401);
+
+        $openApi->getPaths()->addPath('/api/auth/refresh', new PathItem(post: $refreshOperation));
     }
 }

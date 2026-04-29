@@ -39,6 +39,17 @@
   - Nouvelles cibles Makefile : `lint` (tous), `lint-back`, `lint-back-stan`, `lint-back-cs`, `fix-back`, `lint-front`
   - `frontend/.gitignore` : `.vite/` (cache Vite) ajouté
 
+- Refresh token JWT — renouvellement silencieux de session (issue #17-TS)
+  - `gesdinet/jwt-refresh-token-bundle` v2.0.0 + entité `RefreshToken` + migration table `refresh_tokens`
+  - `POST /api/auth/refresh` : rotation du refresh token → nouveaux cookies `BEARER` (TTL 900s) et `REFRESH_TOKEN` (TTL 604800s), HTTP 401 si token absent/invalide/révoqué
+  - `POST /api/auth/login` : pose désormais aussi le cookie `REFRESH_TOKEN` en plus du `BEARER`
+  - `POST /api/auth/logout` : révoque le refresh token en base et efface les deux cookies
+  - `AuthCookieFactory` : centralisation de la construction et de l'effacement des cookies auth
+  - Rate limiting sur `/api/auth/refresh` : 10 req/60s par IP (sliding_window) → HTTP 429
+  - Rotation atomique : `delete()` + `save()` encapsulés dans une transaction Doctrine
+  - `AuthOpenApiDecorator` : endpoint `/api/auth/refresh` documenté dans Swagger UI
+  - 5 tests PHPUnit fonctionnels (RefreshTokenTest) : token valide, absent, invalide, révoqué après logout, double rotation
+
 - Authentification JWT via cookies HttpOnly (issue #16-TS)
   - Entité `User` (email, password, roles) + migration Doctrine
   - `POST /api/auth/login` : authentification email/password → cookie `BEARER` (HttpOnly, Secure, SameSite=Strict, TTL 900s)

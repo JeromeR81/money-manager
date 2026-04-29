@@ -7,9 +7,11 @@ namespace App\Controller;
 use App\Dto\LoginRequest;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Security\Cookie\AuthCookieFactory;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +29,9 @@ final class AuthController extends AbstractController
         private readonly JWTTokenManagerInterface $jwtManager,
         private readonly ValidatorInterface $validator,
         private readonly RateLimiterFactory $loginThrottleLimiter,
+        private readonly RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        private readonly RefreshTokenManagerInterface $refreshTokenManager,
+        private readonly AuthCookieFactory $cookieFactory,
     ) {
     }
 
@@ -72,33 +77,30 @@ final class AuthController extends AbstractController
 
         $token = $this->jwtManager->create($user);
 
-        $cookie = Cookie::create('BEARER')
-            ->withValue($token)
-            ->withExpires(time() + 900)
-            ->withPath('/')
-            ->withSecure(true)
-            ->withHttpOnly(true)
-            ->withSameSite(Cookie::SAMESITE_STRICT);
+        $refreshToken = $this->refreshTokenGenerator->createForUserWithTtl($user, AuthCookieFactory::REFRESH_TTL);
+        $this->refreshTokenManager->save($refreshToken);
 
         $response = $this->json(['message' => 'Authenticated']);
-        $response->headers->setCookie($cookie);
+        $response->headers->setCookie($this->cookieFactory->createBearer($token));
+        $response->headers->setCookie($this->cookieFactory->createRefreshToken((string) $refreshToken->getRefreshToken()));
 
         return $response;
     }
 
     #[Route('/logout', name: 'api_auth_logout', methods: ['POST'])]
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        $cookie = Cookie::create('BEARER')
-            ->withValue('')
-            ->withExpires(1)
-            ->withPath('/')
-            ->withSecure(true)
-            ->withHttpOnly(true)
-            ->withSameSite(Cookie::SAMESITE_STRICT);
+        $refreshTokenString = $request->cookies->get('REFRESH_TOKEN');
+        if (null !== $refreshTokenString) {
+            $refreshToken = $this->refreshTokenManager->get($refreshTokenString);
+            if (null !== $refreshToken) {
+                $this->refreshTokenManager->delete($refreshToken);
+            }
+        }
 
         $response = $this->json(['message' => 'Logged out']);
-        $response->headers->setCookie($cookie);
+        $response->headers->setCookie($this->cookieFactory->clearBearer());
+        $response->headers->setCookie($this->cookieFactory->clearRefreshToken());
 
         return $response;
     }
