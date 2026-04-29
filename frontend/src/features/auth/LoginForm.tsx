@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,6 +15,10 @@ interface LoginFormProps {
 export function LoginForm({ onSubmit, isLoading, error }: LoginFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    if (error !== null) setPassword('')
+  }, [error])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
