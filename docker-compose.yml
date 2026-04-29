@@ -127,8 +127,8 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
     volumes:
       - ./devops/docker/config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DOCKER_CONTAINERS_PATH:-${HOME}/.local/share/docker/containers}:/var/lib/docker/containers:ro
+      - ${DOCKER_HOST_SOCK:-/run/user/1000/docker.sock}:/var/run/docker.sock:ro
     depends_on:
       elasticsearch:
         condition: service_healthy
