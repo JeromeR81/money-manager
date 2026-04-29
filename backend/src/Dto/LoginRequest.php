@@ -11,6 +11,7 @@ final class LoginRequest
     public function __construct(
         #[Assert\NotBlank]
         #[Assert\Email]
+        #[Assert\Length(max: 180)]
         public readonly string $email,
 
         #[Assert\NotBlank]
