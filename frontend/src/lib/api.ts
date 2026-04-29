@@ -44,7 +44,7 @@ export async function fetchApi<T>(path: string, options?: RequestInit): Promise<
     ...options,
   })
 
-  if (response.status === 401 && !SKIP_REFRESH_PATHS.some((p) => path.startsWith(p))) {
+  if (response.status === 401 && !SKIP_REFRESH_PATHS.includes(path)) {
     const refreshed = await tryRefresh()
 
     if (refreshed) {
