@@ -23,6 +23,9 @@ export function useLogout() {
   return useMutation({
     mutationFn: logout,
     onSettled: () => {
+      const channel = new BroadcastChannel('auth')
+      channel.postMessage('logout')
+      channel.close()
       queryClient.removeQueries({ queryKey: ['auth', 'me'] })
       void router.navigate({ to: '/login' })
     },
