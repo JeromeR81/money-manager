@@ -7,6 +7,8 @@ namespace App\Controller;
 use App\Dto\LoginRequest;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -21,12 +23,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/auth', stateless: true)]
 final class AuthController extends AbstractController
 {
+    private const BEARER_TTL = 900;
+    private const REFRESH_TTL = 604800;
+
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly JWTTokenManagerInterface $jwtManager,
         private readonly ValidatorInterface $validator,
         private readonly RateLimiterFactory $loginThrottleLimiter,
+        private readonly RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        private readonly RefreshTokenManagerInterface $refreshTokenManager,
     ) {
     }
 
@@ -72,24 +79,52 @@ final class AuthController extends AbstractController
 
         $token = $this->jwtManager->create($user);
 
-        $cookie = Cookie::create('BEARER')
+        $refreshToken = $this->refreshTokenGenerator->createForUserWithTtl($user, self::REFRESH_TTL);
+        $this->refreshTokenManager->save($refreshToken);
+
+        $bearerCookie = Cookie::create('BEARER')
             ->withValue($token)
-            ->withExpires(time() + 900)
+            ->withExpires(time() + self::BEARER_TTL)
+            ->withPath('/')
+            ->withSecure(true)
+            ->withHttpOnly(true)
+            ->withSameSite(Cookie::SAMESITE_STRICT);
+
+        $refreshCookie = Cookie::create('REFRESH_TOKEN')
+            ->withValue((string) $refreshToken->getRefreshToken())
+            ->withExpires(time() + self::REFRESH_TTL)
             ->withPath('/')
             ->withSecure(true)
             ->withHttpOnly(true)
             ->withSameSite(Cookie::SAMESITE_STRICT);
 
         $response = $this->json(['message' => 'Authenticated']);
-        $response->headers->setCookie($cookie);
+        $response->headers->setCookie($bearerCookie);
+        $response->headers->setCookie($refreshCookie);
 
         return $response;
     }
 
     #[Route('/logout', name: 'api_auth_logout', methods: ['POST'])]
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
-        $cookie = Cookie::create('BEARER')
+        $refreshTokenString = $request->cookies->get('REFRESH_TOKEN');
+        if (null !== $refreshTokenString) {
+            $refreshToken = $this->refreshTokenManager->get($refreshTokenString);
+            if (null !== $refreshToken) {
+                $this->refreshTokenManager->delete($refreshToken);
+            }
+        }
+
+        $bearerCookie = Cookie::create('BEARER')
+            ->withValue('')
+            ->withExpires(1)
+            ->withPath('/')
+            ->withSecure(true)
+            ->withHttpOnly(true)
+            ->withSameSite(Cookie::SAMESITE_STRICT);
+
+        $refreshCookie = Cookie::create('REFRESH_TOKEN')
             ->withValue('')
             ->withExpires(1)
             ->withPath('/')
@@ -98,7 +133,8 @@ final class AuthController extends AbstractController
             ->withSameSite(Cookie::SAMESITE_STRICT);
 
         $response = $this->json(['message' => 'Logged out']);
-        $response->headers->setCookie($cookie);
+        $response->headers->setCookie($bearerCookie);
+        $response->headers->setCookie($refreshCookie);
 
         return $response;
     }
