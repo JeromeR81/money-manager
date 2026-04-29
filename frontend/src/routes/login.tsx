@@ -12,10 +12,13 @@ export function LoginRoute() {
 
   let errorMessage: string | null = null
   if (login.isError) {
-    errorMessage =
-      login.error instanceof HttpError && login.error.status === 429
-        ? 'Trop de tentatives, réessayez dans un moment'
-        : 'Identifiants invalides'
+    if (!(login.error instanceof HttpError)) {
+      errorMessage = 'Erreur de connexion, réessayez'
+    } else if (login.error.status === 429) {
+      errorMessage = 'Trop de tentatives, réessayez dans un moment'
+    } else {
+      errorMessage = 'Identifiants invalides'
+    }
   }
 
   return (
