@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Added
+
+- Authentification frontend (issue #18-US)
+  - `GET /api/auth/me` : endpoint backend pour vérifier la session sans exposer le JWT à JavaScript (retourne `{ email }` ou 401)
+  - `src/lib/api.ts` — wrapper `fetchApi` avec intercepteur 401→refresh silencieux (shared `refreshPromise` pour éviter les appels parallèles), `SKIP_REFRESH_PATHS` en correspondance exacte
+  - `/auth/me` ajouté à `SKIP_REFRESH_PATHS` pour éviter une boucle infinie lors du `beforeLoad` de `/login`
+  - Route publique `/login` avec `LoginPage` + `LoginForm` : états loading/error/success, messages d'erreur différenciés (401 / 429 / réseau), champ mot de passe vidé à chaque soumission
+  - Route `_authenticated` (layout route) : `beforeLoad` → `GET /api/auth/me` → redirect `/login` si non authentifié
+  - Déconnexion multi-onglets via `BroadcastChannel('auth')` : le logout propage `'logout'` à tous les onglets ouverts
+  - Redirect automatique vers `/` si un utilisateur déjà authentifié accède à `/login`
+  - Hooks TanStack Query : `useLogin`, `useLogout`, `useCurrentUser`
+  - `authMeQueryOptions` avec `staleTime: Infinity` (cache valide toute la session, invalidé uniquement au logout ou sur 401 non récupérable)
+  - 6 tests Vitest (`LoginForm.test.tsx`) : rendu, soumission, reset mot de passe, états loading/error
+  - 5 tests Playwright E2E (`auth.spec.ts`) : login réussi, login échoué, protection de route, logout, redirection si déjà authentifié — exécution bloquée jusqu'à résolution de l'issue #31 (Playwright non exécutable sur Alpine)
+
 ### Changed
 - Nginx dev : port hôte changé de 80 à 8080 (issue #11) — compatibilité Docker rootless (`ip_unprivileged_port_start=1024`)
 - Commandes CLAUDE.md restructurées autour des cibles `make` (issue #13)

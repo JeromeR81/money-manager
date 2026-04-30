@@ -191,6 +191,30 @@ Voir détail dans `docs/architecture/auth-frontend-api.md`.
 
 ---
 
+## Déviations validées en implémentation
+
+Ces écarts par rapport au contrat initial ont été introduits pendant l'implémentation et validés par le Security & Code Reviewer et le QA.
+
+### 1. Navigation dure au lieu de `router.navigate()` sur refresh échoué
+
+**Spec :** invalider le cache `['auth', 'me']` puis `router.navigate({ to: '/login' })`.
+
+**Implémentation :** `window.location.href = '/login'` (navigation dure). Le rechargement complet annule tous les états et requêtes en vol — comportement plus sûr quand la session ne peut pas être récupérée. L'invalidation explicite du cache est superflue : le rechargement de page réinitialise tout l'état TanStack Query.
+
+### 2. `/auth/me` dans `SKIP_REFRESH_PATHS`
+
+**Spec :** liste de chemins exclus du refresh : `/auth/login`, `/auth/logout`, `/auth/refresh`.
+
+**Implémentation :** `/auth/me` ajouté. Un 401 sur `/auth/me` signifie "non authentifié" (pas "token expiré") — tenter un refresh depuis cet endpoint déclenchait une boucle infinie : `beforeLoad /login` → `ensureQueryData(/auth/me)` → 401 → `tryRefresh()` → échec → `window.location.href = '/login'` → boucle.
+
+### 3. Logout multi-onglets via BroadcastChannel
+
+**Spec :** non spécifié.
+
+**Implémentation :** ajout du `BroadcastChannel('auth')`. Le logout émet `'logout'` sur ce canal ; `AuthenticatedLayout` écoute et redirige tous les onglets ouverts. Le canal est fermé immédiatement après émission et au démontage du composant.
+
+---
+
 ## Dépendances entre agents
 
 | Ordre | Agent | Tâche | Dépend de |
