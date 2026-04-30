@@ -19,7 +19,7 @@ PASSPHRASE=$(openssl rand -base64 32)
 openssl genrsa -aes256 -passout pass:"$PASSPHRASE" -out "$JWT_DIR/private.pem" 4096
 openssl rsa -pubout -in "$JWT_DIR/private.pem" -passin pass:"$PASSPHRASE" -out "$JWT_DIR/public.pem"
 
-chmod 600 "$JWT_DIR/private.pem"
+chmod 644 "$JWT_DIR/private.pem"
 chmod 644 "$JWT_DIR/public.pem"
 
 if [ -f "$ENV_FILE" ]; then
