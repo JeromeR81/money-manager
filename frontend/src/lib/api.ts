@@ -28,8 +28,11 @@ function tryRefresh(): Promise<boolean> {
   return refreshPromise
 }
 
-// Paths that must never trigger a refresh attempt (public auth endpoints).
-const SKIP_REFRESH_PATHS = ['/auth/login', '/auth/logout', '/auth/refresh']
+// Paths that must never trigger a refresh attempt.
+// /auth/me is included because it's the session-check endpoint: a 401 there means
+// "not authenticated", not "token expired" — attempting a refresh would cause an
+// infinite redirect loop when /login's beforeLoad calls ensureQueryData.
+const SKIP_REFRESH_PATHS = ['/auth/login', '/auth/logout', '/auth/refresh', '/auth/me']
 
 async function parseErrorBody(response: Response): Promise<HttpError> {
   const body = await response.json().catch(() => null) as { message?: string } | null
